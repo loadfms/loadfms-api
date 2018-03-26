@@ -1,6 +1,5 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import facets from './facets';
 import devices from './devices';
 
 export default ({ config, db }) => {
