@@ -42,7 +42,7 @@ export default ({ config, db }) => {
     var collection = db.model('device', deviceSchemma);
 
     var query = { name: req.params.name };
-    collection.update(query, { state: req.params.state == 'on' ? 1 : 0 }, {}, function (err, device) {
+    collection.update(query, { state: req.params.state.includes('on') ? 1 : 0 }, {}, function (err, device) {
       if (err) return console.error(err);
       res.json(device);
     })
