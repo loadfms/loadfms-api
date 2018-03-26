@@ -3,27 +3,27 @@ import deviceSchemma from '../models/devices';
 import { Router } from 'express';
 
 export default ({ config, db }) => {
-	let routes = Router();
+  let routes = Router();
 
-	routes.get('/', function (req, res) {
+  routes.get('/', function (req, res) {
     var collection = db.model('device', deviceSchemma);
 
-    collection.find(function (err, kittens) {
+    collection.find(function (err, device) {
       if (err) return console.error(err);
-      res.json(kittens);
+      res.json(device);
     })
   });
-  
+
   routes.get('/:name', function (req, res) {
     var collection = db.model('device', deviceSchemma);
 
-    collection.find({ name: req.params.name}, function (err, kittens) {
+    collection.find({ name: req.params.name }, function (err, device) {
       if (err) return console.error(err);
-      res.json(kittens);
+      res.json(device);
     })
-	});
+  });
 
-	routes.post('/', function (req, res) {
+  routes.post('/', function (req, res) {
     var collection = db.model('device', deviceSchemma);
     let body = req.body;
 
@@ -36,7 +36,17 @@ export default ({ config, db }) => {
       if (err) return console.error(err);
       res.json(object)
     });
-	});
+  });
 
-	return routes;
+  routes.put('/:name/:state', function (req, res) {
+    var collection = db.model('device', deviceSchemma);
+
+    var query = { name: req.params.name };
+    collection.update(query, { state: req.params.state == 'on' ? 1 : 0 }, {}, function (err, device) {
+      if (err) return console.error(err);
+      res.json(device);
+    })
+  });
+
+  return routes;
 }
