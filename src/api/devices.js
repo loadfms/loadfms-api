@@ -14,16 +14,16 @@ export default ({ config, db }) => {
     })
   });
 
-  routes.get('/status', function (req, res) {
+  routes.get('/:port', function (req, res) {
     var collection = db.model('device', deviceSchemma);
 
-    collection.find(function (err, device) {
+    collection.find({ port: req.params.port }, function (err, device) {
       if (err) return console.error(err);
-      let result = [];
-      device.forEach(item => {
-        result.push(item.port + '-' + item.state);
-      });
-      res.send(result.join());
+      if (device.length > 0) {
+        res.send(device[0].state == 1 ? "turnon" : "turnoff");
+      } else {
+        res.send('');
+      }
     })
   });
 
