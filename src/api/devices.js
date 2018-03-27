@@ -14,12 +14,16 @@ export default ({ config, db }) => {
     })
   });
 
-  routes.get('/:name', function (req, res) {
+  routes.get('/status', function (req, res) {
     var collection = db.model('device', deviceSchemma);
 
-    collection.find({ name: req.params.name }, function (err, device) {
+    collection.find(function (err, device) {
       if (err) return console.error(err);
-      res.json(device);
+      let result = [];
+      device.forEach(item => {
+        result.push(item.port + '-' + item.state);
+      });
+      res.send(result.join());
     })
   });
 
@@ -29,7 +33,8 @@ export default ({ config, db }) => {
 
     var item = new collection({
       name: body.name,
-      state: body.state
+      state: body.state,
+      port: body.port
     });
 
     item.save(function (err, object) {
