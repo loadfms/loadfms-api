@@ -53,5 +53,22 @@ export default ({ config, db }) => {
     })
   });
 
+  routes.put('/:name', function (req, res) {
+    var collection = db.model('device', deviceSchemma);
+    let body = req.body;    
+
+    var item = new collection({
+      name: body.name,
+      state: body.state,
+      port: body.port
+    });
+
+    var query = { name: req.params.name };
+    collection.update(query, item, {}, function (err, device) {
+      if (err) return console.error(err);
+      res.json(device);
+    })
+  });
+
   return routes;
 }
