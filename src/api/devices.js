@@ -56,18 +56,27 @@ export default ({ config, db }) => {
   routes.put('/:name', function (req, res) {
     var collection = db.model('device', deviceSchemma);
     let body = req.body;    
+    let foundDevice = undefined;
+    
 
-    var item = new collection({
-      name: body.name,
-      state: body.state,
-      port: body.port
-    });
+
 
     var query = { name: req.params.name };
-    collection.update(query, item, {}, function (err, device) {
-      if (err) return console.error(err);
-      res.json(device);
-    })
+
+    collection.find(query, function (err, device) {
+      foundDevice = device[0];
+      foundDevice.name = body.name;
+      foundDevice.state = body.state;
+      foundDevice.port = body.port;
+
+      collection.update({_id: foundDevice._id}, foundDevice, {}, function (err, device) {
+        if (err) res.json(err);
+        res.json(device);
+      })
+
+    });
+
+    
   });
 
   return routes;
